@@ -12,6 +12,11 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(bodyParser.json());
 
+app.get("/api", (req, res) => {
+  res.json({ message: "Welcome to my API" });
+});
+
+
 // ✅ Connect MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
