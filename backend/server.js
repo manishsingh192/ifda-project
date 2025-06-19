@@ -1,33 +1,29 @@
+// 📦 Import required packages
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+require("dotenv").config(); // 🔐 Load env variables
 
-// ✅ Load environment variables from .env file
-require("dotenv").config();
-
+// 🏁 Initialize app
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// 🛡️ Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Welcome to my API" });
+// ✅ Root route
+app.get("/", (req, res) => {
+  res.send("Welcome to the backend of IFDA API");
 });
 
+// 🔗 MongoDB Atlas connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected..."))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Connect MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-db.once("open", () => console.log("MongoDB connected"));
-
-// ✅ Schema
+// 🧾 Define User Schema
 const userSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -35,9 +31,10 @@ const userSchema = new mongoose.Schema({
   courseName: String,
 });
 
+// 🧑‍💼 User Model
 const User = mongoose.model("User", userSchema);
 
-// ✅ POST: Create user
+// 📬 POST: Add user
 app.post("/api/users", async (req, res) => {
   try {
     const newUser = new User(req.body);
@@ -48,7 +45,7 @@ app.post("/api/users", async (req, res) => {
   }
 });
 
-// ✅ GET: Fetch users
+// 📥 GET: Fetch all users
 app.get("/api/users", async (req, res) => {
   try {
     const users = await User.find();
@@ -58,6 +55,7 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
+// 🚀 Start server
 app.listen(PORT, () => {
-  console.log(`Backend running at http://localhost:${PORT}`);
+  console.log(`🚀 Backend running at http://localhost:${PORT}`);
 });
